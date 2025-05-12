@@ -1,0 +1,354 @@
+
+		Good Morning All
+	
+		Welcome to Grafana and Prometheus Training
+			   ----------------------
+		This is Palani Karthikeyan (call: Karthik) - Trainer
+			-----------------------------------
+		We will start session @ 9:30 AM IST
+		
+ 	########################################################################
+
+Grafana 
+--------
+ ->Visualization tool
+   -------------------
+
+ ->Grafana + Prometheus 
+   --------+ InfluxDB
+           + MySQL ; Oracle
+	   + Cloud Exporters(aws;oci;gcp...)
+	   + Excel ; CSV File
+	   + ....
+	   + Loki - text
+	    ---------------------------
+		|->data source
+
+->Dashboard - 1 or more visualization(panel)
+	    - panel - visualization
+		|
+		|->own set of attributes
+	    - edit 
+
+ Units
+ ---------
+ 1.measurement - floating value - ex: 98.54 53.32 - prometheus results
+ 2.text  - string - logger - loki 
+ 3.trace - tempo
+ --------- ===============
+		|->data sources
+
+#################################################################################
+
+  OS - Kernel - File,Process
+  
+  File-Data - under the storage 
+  Process - Data - under the CPU
+
+
+			Process
+			  |
+   1.User process			2.system process(daemon;service)
+    - by user				 - not created by user
+    - TTY:pts/<port>			 - TTY:?
+   (ex:IO devices)	    - while os loading time systemprocess gets started					
+ download grafana ->  grafana.exe file = windows
+		      -----------
+			|->File |->Process (R+)
+
+		 -> /bin/grafana  - Linux like os
+			----------
+			|->File |->Process (R+)
+
+root@host~]# /bin/grafana {enter} ; open a broswer ->IP.... visualization 
+.....
+..... R+
+		/etc/systemd/system/grafana-server.service
+
+		ExecStart=/bin/grafana
+
+===================================================================================
+ 127.0.0.1:3000
+	   ----
+
+Login: admin
+password: admin
+ |
+Grafana dashboard Home 
+
+===============================================================================
+ssh <remoteHost> # commandline - user process
+|
+sshd.service R+ (running) - system process
+-------------
+  |->map to real sshd binary file  /sbin/sshd
+		     -------
+
+################################################################################
+
+Grafana + random numbers (randomQuery)
+-------
+|
+Grafana + InfluxDB
+|
+Grafana + oci - exporters 
+|
+Grafana + Excel 
+|
+Grafana + Prometheus 
+
+########################################################################################
+
+
+user IO ----> 95 ---------->  [  95 ] - 1st value
+	 5s
+user IO ---> NaN --------->  [NaN] <== First
+	 5s
+user IO ---> NaN --------->  [] <== First*
+
+
+Dashboards/  <---- General - default Folder 
+	   DB1 DB2 DB3...
+
+OU-DAY1/
+	DB1 DB2
+OU-DAY2/
+OU-DAY3/..
+
+
+################################################################################
+Task 1
+------
+ Create a new folder (ex: demo1)
+	  ----------
+           |->Create a new dashboard
+			|-> create a timerseries panel
+					|->create multiple query(a,b,c)
+					|->tooltip
+					    |->Single ; All
+					    |->enable and disable set of query
+				
+	   |->Create a new Gauge panel
+			|->duplicate 2 panels
+				
+			   Title: swap   RES	SHM
+			   update threshold value(swap >90; RES >80 ; SHM >65)
+			   update gauge value
+	   |->Create a new row ->memory_info
+	   |->add all 3 Gauge panels to memory_info row
+
+
+	   |->Create a new row ->process_info
+	      |->create 3 stat panels - duplicate
+	      |->set value mapping for stat
+	      |->add 3 panels to process_info
+
+  |->Save this dashboard
+----------------------------------------------------------------------------------
+json 
+-----
+ ->store and exchange data between web applications
+   ------------------
+
+General Web
+Client:
+ Enter emp ID:|<input>| 
+	(submit)
+	   |---------->----------webserver--->------server-script------....
+
+		-----------<------------------------<----------------------
+				Webpage response (<html>.{{data}}..</html>)
+
+
+	Emp name		<html>
+	Emp dept		<head>
+	Emp Bgroup		<p>..Emp name:{{ename}} ...</p>
+	...
+				</html>
+
+ Enter emp ID:|<input>| 
+	(submit)
+	   |---------->----------webserver--->------server-script------....
+
+		-----------<------------------------<----------------------
+				data response (data)
+				----------------------//json
+
+	Emp_Info:[EmpName,EmpDept,EmpBgroup,EmpAge...]
+	 <or>
+	EmpName
+	EmpDept
+	 <or>
+	{K1: EmpName,K2: EmpDept..}
+	-------------------------------------//data response 
+
+
+	int float str bool(true false)null	
+	array - index based  # 1D
+	object - key:value   # 1D
+		Vs		
+	array of array		[ [att1,att2,att3],[att4,att5] ]
+	array of object		[ {K1: V1,K2:V2},{},{}]
+	object of array		{K1: [],K2:[]}				MD
+	object of object	{K1: {K1:V1,K2:V2}}
+	------------------
+
+	panel_link: [{google.com},{grafan.com},{}]
+						 --
+---------------------------------------------------------------------------
+panel properties - json format
+dashboard - json format
+---------   --------------------//we can export - share our dashboard
+----------------------------------------------------------------------------
+
+Influx DataBase - TimeSeriesDataBase
+-------------------------------------
+
+      ^ |
+value | |	. <== data point
+        |	-
+        |--------------
+	   time ->
+
+ Built Time Series Database
+ Implemented using Go
+ Simple Query
+ InfluxQL(Sql based) + Flux (Function Query)
+ Native HTTP based interface
+ real-time analytics,IoT-sensor data,monitoring ...
+ open source - single node
+ commericial version - cluster
+
+ OtherDB	InfluxDB
+ Database - Database
+ Table  - measurement 
+ Columns - Tags - supports string type data
+ Non-Index table column - field (int,float,bool,str)
+
+create database <dbname>
+|
+insert <measurement>,<tags>	field
+	
+insert cpu,host=server1,region=us_west value=0.45   <timestamp>
+----------- ===____________________________ -----------
+
+
+DB
+---
+Query ->OK
+|
+DataSource Configurations
+--------------------------
+Step 1: Go to Grafana Datasources
+Step 2: Select - DataSource 
+		(Datasource - Daemon Active (or) .exe <or> binary file - RunningState)
+|
+Step 3: HTTP end point details
+	IP:<port>
+	datasource(database name)  ...
+	//like form
+	<OK> - Success - OK 
+|
+Step 4: Go to dashboard ->do visualization
+
+#########################################################################################
+Connected to http://localhost:8086 version 1.7.1
+InfluxDB shell version: 1.7.1
+Enter an InfluxQL query
+> show databases
+name: databases
+name
+----
+_internal
+demo1
+day1
+demo2
+> create database test1
+> show databases
+name: databases
+name
+----
+_internal
+demo1
+day1
+demo2
+test1
+> use test1
+Using database test1
+>
+> show measurements
+>
+> insert cpuUsage,host=node1 idle=98.45
+>
+> show measurements
+name: measurements
+name
+----
+cpuUsage
+>
+> select *from cpuUsage
+name: cpuUsage
+time                host  idle
+----                ----  ----
+1747047235449522700 node1 98.45
+>
+>
+> insert cpuUsage,host=node1 idle=88.25
+>
+> select *from cpuUsage
+name: cpuUsage
+time                host  idle
+----                ----  ----
+1747047235449522700 node1 98.45
+1747047487147616000 node1 88.25
+>
+>
+> insert cpuUsage,host=node1 idle=78.25
+>
+> insert cpuUsage,host=node1 idle=78.25
+>
+> select *from cpuUsage
+name: cpuUsage
+time                host  idle
+----                ----  ----
+1747047235449522700 node1 98.45
+1747047487147616000 node1 88.25
+1747047820649135100 node1 78.25
+1747047902687525500 node1 78.25
+>
+> drop measurement cpuUsage
+>
+> insert cpuUsage,host=node1 idle=78.25
+> insert cpuUsage,host=node1 idle=65.12
+> insert cpuUsage,host=node1 idle=165.12
+>
+####################################################################################
+
+MAC:
+===
+Open Terminal
+brew install influxdb@1 
+cd /opt/homebrew/Cellar/influxdb@1/1.12.0/bin
+./influxd
+open another terminal 
+cd /opt/homebrew/Cellar/influxdb@1/1.12.0/bin
+./influx
+show databases
+create database demo1
+show database
+use demo1
+show measurements
+insert cpu,host=node1 idle=98.33
+select * from cpu
+####################################################################################
+For Windows:
+https://dl.influxdata.com/influxdb/releases/influxdb-1.7.11_windows_amd64.zip
+
+For Linux
+wget https://dl.influxdata.com/influxdb/releases/influxdb-1.7.11_linux_amd64.tar.gz
+tar xvfz influxdb-1.7.11_linux_amd64.tar.gz
+
+For macOS:
+wget https://dl.influxdata.com/influxdb/releases/influxdb-1.7.11_darwin_amd64.tar.gz
+tar zxvf influxdb-1.7.11_darwin_amd64.tar.gz
+#########################################################################################
