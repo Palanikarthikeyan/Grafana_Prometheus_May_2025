@@ -1,0 +1,151 @@
+Recap
+------
+Grafana - Visualization tool
+	- dynamic dashboard - 1 or more panels(visualization)
+	- each panel - set of attributes/property
+	- edit (UI <or> json)
+	|
+	- share this dashboard - json - file - import a file
+	- default folder - dashboards
+	- we can create own folder 
+				|->dashboards 
+
+	Grafana + randomQuery
+	Grafana + influxDB	
+		  
+Grafana + InfluxDB [ influxD - Running ]
+-------   ========   --------
+-------------------------------------------------------------------------------------
+grafana + variables
+grafana + annotation
+grafana-cli 
+grafana + oci
+grafana + Excel
+grafana + alerts,playlist,snapshot...
+
+variable 
+--------
+ place holder - holding a value
+			  -----
+ 
+ List_of_nodes <== variable name (user defined)
+ ---------------
+
+ Replace variable value ->  $variableName =>  $List_of_nodes
+	---------------
+	|->Regx pattern only style
+
+	^pattern - line starts with pattern
+	 pattern$ - line ends with pattern
+
+	 ^pattern$ - pattern only  => /Regx/ => /^$List_of_nodes$/
+
+ =~
+ !~
+------//Regx operators <or> match operators
+
+ =~  ->match 
+ !~  ->Not-Match 
+
+SHOW TAG VALUES WITH KEY = "host"
+
+#########################################################################
+annotation
+------------
+Adding some text/event on the data point
+			      -----------
+
+
+	| o <--
+	|	o <-- Text Description	
+	-----------
+
+	| o		o
+	|  <---NoData-->		
+	| 	Text - Region annotation	
+	-----------------
+
+	annotationbar(<--->Select) <== Query annotation
+	|
+	|
+	|
+	-------------------
+
+ Time/Timestamp - exact time the event occured
+ Tags - like labels - help categorize and filter annotation
+
+ annotation-list - panel - Global panel
+			  -----------------
+
+
+https://play.grafana.org/dashboards
+
+In commandline
+-------------------------------------------------
+grafana-cli plugins install oci-metrics-datasource
+systemctl restart grafana-server # linux 
+--------------------------------------------------
+https://grafana.com/grafana/plugins/oci-metrics-datasource/?tab=installation
+##################################################################################
+
+
+currently we connecting from grafana to cloud - direct interface
+-----------
+Grafana + OCI(Cloud)
+	  oci_
+Grafana + aws(Cloud)
+	  aws_
+	 ...
+--------------------------//Direct interface to cloud 
+	Vs
+
+Oldstyle 
+---------
+[DEFAULTS]
+user=...
+fingerprint=
+tenancy=
+region=
+key_file=<path to your private keyfile>
+|
+|
+1. Download - oci-exporter.exe <or> oci-exporter 
+2. Run oci-exporter.exe <or> oci-exporter
+|   |
+3. prometheus	--------promQL----->---Grafana 
+   - cloud - endpoint		
+
+
+[Grafana]----<---promQL---->---[Prometheus]
+					|<------ p1.py p1.java p1.cpp p1.sh //
+					|<------ FullstackApp(webframework) //
+					|<------ Mysql-server DB
+					|<------ localhost
+					|<------ remote m/c - real os ; virtual os
+					|<------ container
+					|
+					|<----- cloud-exporter ----[oci;aws;gcp..]
+
+################################################################################
+
+Recap
+------
+DataSource - randomQuery - mock 
+	   - influxDB - real TSDB - we inserted data to DB(insert ...)
+	   - oci - pre-defined metrics - we didn't do any insert query
+			       -------
+	   
+
+Excel ->openworksheet
+------------------------------------------------------------------------------------
+  json
+  -----
+ [] - array  - index based [10,2.3,data,true]
+ {} - object - key based   {K1:10,K2:2.3,K3:data,K4:true}
+
+		[ {K1:10,K2:2.3,K3:data,K4:true}, {K1:10,K2:2.3,K3:data,K4:true} ]
+		 -------0th index ------------- | --------- 1st index --------- 
+		------------------------------------------------------------------	
+			|->array of object
+
+####################################################################################		
