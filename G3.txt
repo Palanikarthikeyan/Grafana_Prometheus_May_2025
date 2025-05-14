@@ -1,0 +1,406 @@
+
+ocuocictrng24	OCI	Built	98829464-lab.user21	pDRduS87v	 
+ocuocictrng24	OCI	Built	98829464-lab.user22	aHe8cx3tX	 
+ocuocictrng24	OCI	Built	98829464-lab.user23	csFNMDn4m	 
+ocuocictrng24	OCI	Built	98829464-lab.user24	aP2V6de9J	 
+-----------------------------------------------------------------------------------
+
+1. YAML
+2. service file <or> unit file
+
+[Grafana] + [DataSource - influxDB,Cloud,Excel,JSON etc.,]
+			  prometheus(promQL)
+
+
+1. YAML
+========
+1. prometheus configuation file - prometheus.yml
+2. alert rules  } filename.yml
+3. record rules } filename.yml
+
+YAML
+-----
+yaml file content -> key: value //format
+		
+key: value
+     -----
+	|->Single data - Scalar - int float str bool(true false on off yes no 1 0) NaN 
+			 ------ 
+	|->Collection
+		|->Array <or> list 		- index based 		[]
+		|->Object <or> hash <or> dict   - key:value - key based {}
+
+file-property
+
+filename: index.html
+fileSize: 50
+fileUtil: 98.42
+filemount: true
+Key:<space>Value
+    -------======//scalar value
+
+ fileinfo: [index.html,50,98.42,true]
+ |
+ 1Key: <more than one value> # 1Key: <many values>
+
+ fileinfo: [index.html,50,98.42,true]
+		0th     1   2    3 
+	<or>
+ fileinfo:
+ - index.html  - 0th index 
+ - 50	       - 1st index
+ - 98.42       - 2nd index
+ - true	       - 3rd index
+
+fileinfo: {K1: index.html,K2: 50,K3: 98.42,K4: true}
+--------  ===========================================
+	<or>
+
+fileinfo:			fileinfo:
+<><>K1:<>index.html		   K1: index.html
+<><>K2:<>50			   K2: 50
+<><>K3:<>98.42			   K3: 98.42
+<><>K4:<>true                      K4: true
+
+<> - 1space
+<><> - 2space
+-------------------------------------------------------------------------------
+
+In General Configuration file
+
+  1. INI	->	Key=Value (ex: TYPE=Ethernet  
+				       Interface=eth0
+				       IPADDR=10.20.30.40
+					
+					[repo]
+					baseurl=https://...)
+  2. YAML
+  --------	Key: <multiplevalue>
+
+		Type: ethernet
+		Interface: [eth0,eth1,eth2,lo]
+		..
+-------------------------------------------------------------------------------
+
+Array of array
+--------------
+K1: [[D1,D2,D3],[D4,D5],[D6,D7]]
+ <or>
+K1:
+- 
+  - D1
+  - D2
+  - D3
+- 
+  - D4
+  - D5
+- 
+  - D6
+  - D7
+  
+ {Job_name: J1,Job_name: J2} //duplicate-key 
+	Vs
+ [{Job_name: J1}, {Job_name: J2} ] //array object
+  ----0th------  ---1st index---
+      <or>
+ - job_name: J1  # 0th index
+ - job_name: J2  # 1st index
+
+
+K1: [ {job_name: J1},{job_name: J2},{job_name: J3} ] # array of object
+      --------------
+
+	[remote-node:10.20.30.40] -------------[prometheus-server ; node1:10.20.30.40]			     10.20.33.44 					  -----------
+#########################################################################################
+
+2. root@host~]# ssh node1 {Enter} //user-process
+		Vs
+		sshd.service (or) sshd # active-Running (R+)
+		============
+		 |->map actual binary(or)executable file
+	
+file.service
+-------------
+[Unit]
+Description=<own description about service>
+[Service]
+ExecStart=<actual executable binary> --config=<Configuration>
+[Install]
+WantedBy=
+---------------	
+
+
+			Process
+			  |
+   1.User process			2.system process(daemon;service)
+    - by user				 - not created by user
+    - TTY:pts/<port>			 - TTY:?
+   (ex:IO devices)	    - while os loading time systemprocess gets started					
+ download grafana ->  grafana.exe file = windows
+		      -----------
+			|->File |->Process (R+)
+
+		 -> /bin/grafana  - Linux like os
+			----------
+			|->File |->Process (R+)
+
+root@host~]# /bin/grafana {enter} ; open a broswer ->IP.... visualization 
+.....
+..... R+
+		/etc/systemd/system/grafana-server.service
+
+		ExecStart=/bin/grafana
+
+
+To create own service file <or> Convert user process to system process
+----------------------------------------------------------------------	
+STEP 1: create a config file /etc/systemd/system/filename.service
+	[Unit]
+	Description=<own description about service>
+	[Service]
+	ExecStart=<actual executable binary> --config=<Configuration>
+	[Install]
+	WantedBy=multi-user.target
+	
+STEP 2: reload the daemon # systemctl daemon-reload	
+	
+STEP 3: To start automatically -while os loading time-> systemctl enable filename.service
+|
+STEP 4: Test -> systemctl start filename.service
+		systemctl status filename.service
+		systemctl stop filename.service	
+		systemctl restart filename.service
+	
+
+[prometheus-server]-------------------[remote-node1]
+MyLaptop				..	- exporters	
+				      [remote-nodeN]
+						- exporters ->Running state
+
+					open terminal -> ./....
+======================================================================================
+Prometheus
+----------
+ |-> monitoring and alerting toolkit
+     -------------------------------
+ |-> metrics data as time-series data
+
+ |-> <metricName>{Key1=value,Key2=Value} <finalValue> <timeStamp>
+		 |<--- Label ----->|
+
+ |->measurment ->float
+ 
+ |->Pull-based data collection - prometheus scrapes metrics by HTTP requests 
+
+
+
+wget https://github.com/prometheus/prometheus/releases/download/v3.4.0-rc.0/prometheus-3.4.0-rc.0.darwin-amd64.tar.gz
+
+https://github.com/prometheus/prometheus/releases/download/v3.4.0-rc.0/prometheus-3.4.0-rc.0.windows-amd64.zip
+
+###############################################################################
+
+prometheus_Version
+<2.7
+process_....
+function_go...
+...
+
+prometheus_....
+prometheus_....
+------------------//localhost metric info
+
+node_.....
+node_....
+node_....
+--------------//remotenode info
+
+go_.....
+------------//metric name - written by go language
+
+container_.....//conainers
+
+mysql_.... //mysql metrics - application monitoring
+
+<metricName>{Key1=Value Key2=Value}
+	    |_______label_________|
+
+<nodeIP:port>/metrics {Enter}
+........
+........ read this metrics info
+........
+........
+
+https://github.com/prometheus/prometheus/releases/download/v3.4.0-rc.0/prometheus-3.4.0-rc.0.linux-amd64.tar.gz
+
+<metric-name>{Key1=Value,Key2=Value, ...Kn=Vn}
+	     -----------------------------------//we can filter - label value
+		- relational operators = != < > <= >=
+		- regx =~ !~ 
+		       ------
+
+prometheus_http_requests_total		
+prometheus_http_requests_total{code = "302"}
+prometheus_http_requests_total{code != "200"}
+
+<metricName>{} ->pop up list of keys
+
+<metricName>{Key1<operator>"Value"}
+		  
+prometheus_http_requests_total{code != "200",handler="/"}
+
+#####################################################################################
+
+
+[prometheus-server(monitoring-node)] - localhost:9090
+
+
+[prometheus-server]<------------------------------------------->[remote M/C]
+		    1st step - establish network connectivity - linux;mac ->node_exporter								:9100
+		    2nd step - download remote_node exporter
+					--------------------//binary file
+		    3rd step - run the exporter (process)
+			       		|
+					|->Collect system metrics and give to prometheus
+						/metric - HTTP
+		   4th step update remote node details to prometheus(prometheus.yml)
+		   5th step restart prometheus.
+|
+|->status ->targets
+|
+on the prometheus - server
+# remote-IP:9100/metrics
+# -----------------------
+node_
+node_
+node_
+node_ ...
+
+######################################################################################
+
+oci - OL8 - remote_node 
+	    |
+	   connect OL8
+	   opc@host~]$ sudo su -
+	   root@host~]# 
+	   
+Laptop(prometheus) <------ping oci-instance ----->[OL8]
+	
+	   opc@host~]$ sudo su -
+	   root@host~]# wget https://github.com/prometheus/node_exporter/releases/download/v1.9.1/node_exporter-1.9.1.linux-amd64.tar.gz
+	   
+
+vi node_exporter_install.sh
+#!/bin/bash
+NODE_EXPORTER_VERSION="1.9.1"
+wget https://github.com/prometheus/node_exporter/releases/download/v${NODE_EXPORTER_VERSION}/node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64.tar.gz
+tar -xzvf node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64.tar.gz
+cd node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64
+cp node_exporter /usr/local/bin
+
+echo '[Unit]
+Description=Node Exporter
+
+[Service]
+ExecStart=/usr/local/bin/node_exporter
+
+[Install]
+WantedBy=multi-user.target' > /etc/systemd/system/node_exporter.service
+
+# enable node_exporter in systemctl
+systemctl daemon-reload
+systemctl start node_exporter
+systemctl enable node_exporter
+:wq
+
+chmod a+x node_exporter_install.sh
+./node_exporter_install.sh
+###################################################
+root@host~]# systemctl status node_exporter 
+
+root@host~]# firewall-cmd --permanent --add-port=9100/tcp
+	     firewall-cmd --reload
+	     firewall-cmd --list-ports
+
+root@host~]# curl 127.0.0.1:9100/metrics
+...
+...
+##################################################
+node Collector
+	|->cpu Filesystem Diskstats Netdev Meminfo Stat Uname Loadavg
+	  |___________________________________________________________|
+		Linux -> /proc  /sys   .... 
+		------  ======
+			# |->Current state of kernel info (details)
+			# 
+		/etc 	Vs  	/proc 
+		----	    	------
+		|-update	 |->update kernel parameters 
+		  any kernel 	
+		  parameters	 |-> there is no reboot <or> restart
+		|->reboot <or>
+		   restart is 	 |-> Run time only ->Not-Permanent update
+		   required
+		|-> permanent update
+
+
+CPU - node_cpu_seconds_total
+      -----------------------
+     
+Filesystem - node_filesystem_size_bytes
+	     node_filesysetm...
+
+Diskstats - disk IO metrics  ->node_disk_io_now
+			       node_disk_
+
+node_disk_io_now - The number of I/Os in progress
+node_disk_io_time_seconds_total - Incremented when IO in progress
+-------------------------------------------------------------------------
+The diskstats collector - exposes disk IO metrics from /proc/diskstats.
+------------------------------------------------------------------------
+node_disk_read_bytes_total 
+node_disk_read_time_seconds_total  - The time taken by read IO.
+	  written
+
+Average time seconds for read I/O
+node_disk_read_time_seconds_total / node_disk_reads_completed_total
+
+########
+Network device collector -> node_network_
+			    --------------
+
+########
+Meminfo -> /proc/meminfo
+			
+node_memory_
+######################################################################
+
+https://github.com/prometheus-community/
+
+1.download - windows exporter from  
+  https://github.com/prometheus-community/windows_exporter/releases
+ 
+2. windows_exporter-0.30.6-amd64.exe --collectors.enabled "cpu,system,os,net"
+
+3. open another terminal ->curl windowsIP:9182/metrics
+				<or>
+			   open a broswer ->on the address bar ->windowsIP:9182/metrics
+|
+4. update to prometheus(prometheus.yml) then restart prometheus
+################################################################################
+
+wmi_exporter - windows exporter
+-------------
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
