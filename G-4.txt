@@ -1,0 +1,407 @@
+node_exporter - on remote Linux 
+==================================
+Commandline steps:
+
+wget https://github.com/prometheus/node_exporter/releases/download/v1.9.1/node_exporter-1.9.1.linux-amd64.tar.gz
+
+tar -xvzf node_exporter-1.9.1.linux-amd64.tar.gz
+
+cd node_exporter-1.9.1.linux-amd64
+cp node_exporter /bin/  (or) cp node_exporter /usr/local/bin
+
+vi /etc/systemd_/system/node_exporter.service
+[Unit]
+Description=""
+[Service]
+ExecStart=/usr/local/bin/node_exporter
+[Install]
+WantedBy=multi-user.target
+:wq
+
+systemctl daemon-reload
+systemctl enable node_expoter
+systemctl start node_exporter
+
+curl 127.0.0.1:9100/metrics
+..
+..
+----------------------------------------------------------------------------
+
+[student@krosumlabs ~]$ mkdir D3
+[student@krosumlabs ~]$ cd D3
+[student@krosumlabs D3]$ ls
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ date
+Thu May 15 10:10:30 IST 2025
+[student@krosumlabs D3]$ datee
+-bash: datee: command not found
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ date >r1.log # STDOUT - write
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ datee >err.log # STDERR - write
+-bash: datee: command not found
+[student@krosumlabs D3]$ cat r1.log
+Thu May 15 10:10:55 IST 2025
+[student@krosumlabs D3]$ cat err.log
+[student@krosumlabs D3]$ datee 2>err.log
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ date >r1.log 2>err.log
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ dasadfste >r1.log 2>err.log
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ cat err.log
+-bash: dasadfste: command not found
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ date >r1.log 2>&1
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ dasfdste >r1.log 2>&1
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ ls -l r1.log
+-rw-r--r--. 1 student wheel 35 May 15 10:13 r1.log
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ dasfdste >/dev/null 2>&1
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ ping 127.0.0.1 >/dev/null 2>&1
+
+
+ls
+ps
+ls
+^C[student@krosumlabs D3]$
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ ping 127.0.0.1 >/dev/null 2>&1 &
+[1] 2341
+[student@krosumlabs D3]$ jobs
+[1]+  Running                 ping 127.0.0.1 > /dev/null 2>&1 &
+[student@krosumlabs D3]$
+[student@krosumlabs D3]$ cd ..
+[student@krosumlabs ~]$ cd D4/
+[student@krosumlabs D4]$
+[student@krosumlabs D4]$ ls
+node_exporter-1.9.1.linux-amd64  node_exporter-1.9.1.linux-amd64.tar.gz
+[student@krosumlabs D4]$
+[student@krosumlabs D4]$ cd node_exporter-1.9.1.linux-amd64
+[student@krosumlabs node_exporter-1.9.1.linux-amd64]$ ls
+LICENSE  node_exporter  NOTICE  p1.log
+[student@krosumlabs node_exporter-1.9.1.linux-amd64]$
+[student@krosumlabs node_exporter-1.9.1.linux-amd64]$ ./node_exporter >/dev/null 2>&1 &
+[2] 2352
+[student@krosumlabs node_exporter-1.9.1.linux-amd64]$
+[student@krosumlabs node_exporter-1.9.1.linux-amd64]$
+[student@krosumlabs node_exporter-1.9.1.linux-amd64]$ jobs
+[1]-  Running                 ping 127.0.0.1 > /dev/null 2>&1 &  (wd: ~/D3)
+[2]+  Running                 ./node_exporter > /dev/null 2>&1 &
+[student@krosumlabs node_exporter-1.9.1.linux-amd64]$
+[student@krosumlabs node_exporter-1.9.1.linux-amd64]$
+[student@krosumlabs node_exporter-1.9.1.linux-amd64]$ curl 127.0.0.1:9100/metrics
+#####################################################################################
+
+promQL
+------
+Prometheus metric types
+--------------------------
+ 1. counter
+ 2. gauge
+ 3. histogram
+ 4. summary
+
+ 1. counter - increased value # request count ; job/process completed ; started 
+    --------		
+    http_requests_total{method="GET"} -> number 
+
+2. gauge - increased <or> decreased (ex: memory ; cpu ; disk size ..)
+   -----
+
+3. histogram - observation (ex: request URL ->request duration
+					      response duration)
+		bucket
+		
+		_bucket
+		_count 
+		_sum
+		-------
+4. summary - like histogram - quantiles - on the client side 
+		rpc_duration_seconds_
+		
+
+Prometheus-metric ->result(floatingValue)
+				|->Instant vector
+
+<prometheus-metric> ->result (float-value) # instant vector
+
+10 ->scalar value 10
+
+<prometheus-metric> ->result (float-value) # instant vector
+
+
+<prometheus-metric>[duration] ->result # range vector 
+-----------------------------------------------------//won't display graph
+rate() - calculate the per-second average rate of increase over a range
+------
+
+binary operators
+-----------------
+1. arithmetic + - * / %	->int,float
+2. relational - comparison operators -> == != < > <= >= ->bool
+
+------------------------------------------------------------
+Get the average response size across all instance of a job
+------------------------------------------------------------
+sum without(instance)(sum without(handler)(rate(prometheus_http_response_size_bytes_sum[5m]))) 
+   / 
+sum without(instance)(sum without(handler)(rate(prometheus_http_response_size_bytes_count[5m])))
+
+##################################################################################
+
+10 ->scalar value
+
+Convert scalar to instant vector -> vector(scalar_value) -> {} instant_vector
+
+instant_vector to scalar ->scalar(instant_vector) ->scalar_value
+----------------------------------------
+How long process have been running?
+time() - process_start_time_seconds
+-----------------------------------------
+
+https://promlabs.com/promql-cheat-sheet/
+
+
+#######################################################
+Recap - promQL
+---------------
+metric types
+operators
+ |->Aggregation operators
+	|->Grouping
+	   by
+	   without
+	|->sum,max,min,avg,topk,bottomk.
+ |->Binary operators
+	|->Arithmetic
+	|->Relational
+	|->Set operation (or) logical operators 
+	----------------------------------------
+		|->One to One ( process_open_fds > 5000 )
+			      ( process_open_fds / process_max_fds)
+		|->Many-to-Many
+			rate(process_cpu_seconds_total[5m]) unless process_resident_memory_bytes <100 * 1024 * 1024
+		 # To know the average CPU Usage of processes except those using less than 100MB of resident memory
+
+function -> refer =>https://prometheus.io/docs/prometheus/3.2/querying/functions/#rate
+	    |
+	 Go to https://promlabs.com/promql-cheat-sheet/
+
+functions
+  |->Type - chainging type 	
+		vector ; scalar
+  |->mathematics functions - abs() ln,log2 exp sqrt
+  |->Time and Date
+  |->Counter => rate()
+  |->Gauge  => Aggregate functions
+========================================================================================
+
+display used memory size
+
+node_memory....
+
+(node_filesystem_avail_bytes / node_filesystem_size_bytes{job="node1-OL7",device!="tmpfs"}) * 100
+###############################################################################
+
+https://github.com/martinlindhe/wmi_exporter
+				
+########################################################################
+
+Recording Rules
+-----------------
+Recording rules - yaml file - prometheus used this recording rules file for 
+		      precompute and store the results of promQL into new timeseries.
+Improve performance
+reusability 
+
+rate(prometheus_http_requests_total{job="Ubuntu-Prometheus-Server",code != "200"}[5m])
+--------------------------------------------------------------------------------------
+ |->convert to yaml file
+
+recording rule file format
+===========================
+groups:
+-<space>name:<space>User-Defined-GroupName
+        interval:<space>duration
+	rules:
+        -<space>record:<space><userdefined-rulename>
+                expr:<space>promQL
+--------------------------------------------------------------//save this file and update to prometheus(prometheus.yml)
+
+
+groups:
+- name: sample
+  interval: 20s
+  rules:
+  - record: myrule1
+    expr: rate(prometheus_http_requests_total{job="Ubuntu-Prometheus-Server",code != "200"}[5m])
+----------------//
+Step 1:
+Go to prometheus =>Query broswer -> promQL ->see the results
+
+Step 2:
+Go to prometheus (prometheus.yml) directory <or> folder ->create a record rule(p1.yml)
+
+groups:
+- name: sample
+  interval: 20s
+  rules:
+  - record: myrule1
+    expr: <promQL>
+-------------------//save and exit
+|
+Step 3:
+Go to prometheus.yml file (edit)
+	rule_files:
+        - p1.yml
+-----------------------//save and exit 
+|
+Step 4:
+restart prometheus server ->check the status 
+|
+Step 5:
+Go to prometheus page ->status ->									       rules_health
+======================================================================================
+
+./p1.sh # <5secs 
+--------
+ --------------
+ p1.sh - job
+ ------------
+ # execute code logic 
+ # post - results to pushgateway - HTTP
+
+ # when application(p1.sh) is running and terminated(exit) - prometheus can't scraped
+							     metrics directly.
+ 
+ # pushes metrics to the pushgateway --<-- prometheus scrapes them from there.
+#####################################################################################
+write application(p1.sh) code - at the end of the line - post operation # push the metrics to pushgateway					
+-----------------------------
+pushgateway port number is: 9091
+
+curl --data-binary @- http://localhost:9091/metrics/
+
+<metricName>{job=<jobName>,instance=<instanceName>}
+
+curl --data-binary @- http://localhost:9091/metrics/job/<jobName>/instance/<instanceName>
+-----------------------------------------------------------------------------------
+
+pushgatway-activity
+---------------------
+1. write a shell script + post operation - give execute permission
+
+2. download pushgateway exporter
+3. add firewall policy - add port 9091
+4. execute pushgateway exporter
+
+5. run the shell script(step 1 code)
+|
+6. curl 127.0.0.1:9091/metrics 
+   ....
+|
+7. update to prometheus (prometheus.yml)
+8. restart a prometheus
+----------------------------
+
+wget https://github.com/prometheus/pushgateway/releases/download/v1.11.1/pushgateway-1.11.1.linux-amd64.tar.gz
+
+tar -xvzf pushgateway-1.11.1.linux-amd64.tar.gz
+cd pushgateway-1.11.1.linux-amd64/
+firewall-cmd --permanent --add-port=9091/tcp
+firewall-cmd --reload
+firewall-cmd --list-ports
+
+./pushgateway >/dev/null 2>&1 &  # starting pushgateway exporter 
+jobs
+
+./p1.sh
+curl 127.0.0.1:9091/metrics
+...
+
+job_execution ...  5 
+|
+vi /etc/prometheus.yml
+  - job_name: "pushgateway-node"
+    static_configs:
+      - targets: ["<nodeIP>:9091"]
+:wq
+|
+systemctl restart prometheus 
+|
+open prometheus webpage -> http://localhost:9090/targets
+...
+###################################################################################
+Application monitoring
+------------------------
+
+ 
+ To monitor remote node => node_exporter <or> windows_exporter ->process(like agent)
+				|
+				<ip>:<port>/metrics
+					|-------------->prometheus:9090
+		Vs
+
+ [p1.java] [p1.py] [p1.cpp] .... [FullstackApp]
+ -------------------------------------------------
+			
+ |->instrument the code 
+		|->expose the metrics about code(application)
+    => code should use prometheus lib
+			...
+	+---------------------+
+	| Application:
+	|   |->start http server:<port>
+	|		|^ 
+	|		|_____________prometheus:9090
+	+
+
+1st download prometheus libs <or> header files
+2nd write code
+3rd - start http_server(8000)
+|
+4th execute the code
+|
+curl localhost:8000/metrics
+	....
+code logic
+-----------
+couter	---->class Counter  counter()  counter::  
+gaguge
+histogram
+summary
+
+# windows
+python -m pip install prometheus_client
+
+# Linux/mac
+pip3 install prometheus_client
+
+
+html css js + UI + serverCode + Database + tools 
+----------------   ==========   --------  ---------//webframework
+		    :8080	:3306		     :5000
+						      -----
+
++-----------------------+
+|	Appln	R+	|
++-----------------|------+
+  |->container	<port>		
+		  |
+		  |<--------------prometheus:9090
+
+########################################################################################
+
+
+
+
+
+
+
+	
